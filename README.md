@@ -1,0 +1,14 @@
+### SnippetBox Golang
+- :white_check_mark: Basic routing
+- :building_construction: Configuration management and error handling
+- Database connection management
+- Dynamic template rendering
+- Middleware
+- RESTful Routing
+- Form processing and validation
+- Stateful HTTP
+- Self-signed TLS, HTTPS Server
+- User authentication and authorization
+- Golang context
+- Unit test, E2E test, integration test
+- 
