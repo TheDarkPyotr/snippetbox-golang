@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
+	"snippetbox/pkg/models"
 	"strconv"
 )
 
@@ -13,24 +13,15 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
+	s, err := app.database.Latest()
 	if err != nil {
-		app.errorLog.Println(err.Error())
 		app.serverError(w, err)
 		return
 	}
 
-	err = ts.Execute(w, nil)
-	if err != nil {
-		app.errorLog.Println(err.Error())
-		app.serverError(w, err)
-	}
+	data := &templateData{Snippets: s}
+	app.render(w, r, "home.page.tmpl", *data)
+
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +30,21 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
+
+	s, err := app.database.Get(id)
+	if err == models.ErrNoRecord {
+		app.notFound(w)
+		return
+	} else if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	//Because html/template allow only pass one data
+	//we wrap snippets in templateData struct
+	data := &templateData{Snippet: s}
+	app.render(w, r, "show.page.tmpl", *data)
+
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
@@ -48,4 +53,16 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
+
+	title := "O snail"
+	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n Kobayashi"
+	expires := "7"
+	id, err := app.database.Insert(title, content, expires)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+
 }

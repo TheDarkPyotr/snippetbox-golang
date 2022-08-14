@@ -1,8 +1,11 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+	"snippetbox/config"
+)
 
-func (app *application) routes(cfc *Config) *http.ServeMux {
+func (app *application) routes(cfc *config.Specification) *http.ServeMux {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.home)

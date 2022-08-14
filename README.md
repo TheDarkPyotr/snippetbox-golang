@@ -1,8 +1,8 @@
 ### SnippetBox Golang
 - :white_check_mark: Basic routing
 - :white_check_mark: Configuration management and error handling
-- :building_construction: Database connection management
-- :building_construction:  Dynamic template rendering
+- :white_check_mark: Database connection management
+- :white_check_mark:  Dynamic template rendering
 - :building_construction:  Middleware
 - :building_construction:  RESTful Routing
 - :building_construction:  Form processing and validation
@@ -13,4 +13,5 @@
 - :building_construction:  Unit test, E2E test, integration test
 
 #### To do
-- Configuration management from `config.json`
+- :white_check_mark: Configuration management from `.env`
+- :building_construction: Dockerize app + MySQL 
