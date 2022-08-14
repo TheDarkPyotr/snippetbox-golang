@@ -3,7 +3,7 @@
  1. Configuration management and error handling :white_check_mark:
  2. Database connection management :white_check_mark: 
  3.  Dynamic template rendering :white_check_mark:
- 4.  Middleware :building_construction:
+ 4.  Middleware using [justinas/alice](https://github.com/justinas/alice) :white_check_mark:
  5.  RESTful Routing :building_construction:
  6.  Form processing and validation :building_construction:
  7.  Stateful HTTP :building_construction:
