@@ -13,5 +13,5 @@
 - :building_construction:  Unit test, E2E test, integration test
 
 #### To do
-- :white_check_mark: Configuration management from `.env`
+- :white_check_mark: Configuration management from `.env` using [envdecode](https://github.com/joeshaw/envdecode)
 - :building_construction: Dockerize app + MySQL 
