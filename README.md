@@ -8,10 +8,13 @@
  6.  Form processing and validation :white_check_mark:
  7.  Stateful HTTP (Session Manager) using [golangcollege/sessions](https://github.com/golangcollege/sessions) 
  :white_check_mark:
- 1.  Self-signed TLS, HTTPS Server :white_check_mark:
- 2.  User authentication and authorization :building_construction:
- 3.   Golang context :building_construction:
- 4.   Unit test, E2E test, integration test :building_construction:
+ 8.  Self-signed TLS, HTTPS Server :white_check_mark:
+ 9.  User authentication and authorization :white_check_mark:
+    - Password Encryption :white_check_mark:
+    - Login/Logout & Authorization :white_check_mark:
+    - [CSRF](https://www.gnucitizen.org/blog/csrf-demystified/) Protection using [justinas/nosurf](https://github.com/justinas/nosurf) :building_construction:
+ 10.   Golang `context` to carry request-scoped data :building_construction: :white_check_mark:
+ 11.   Unit test, E2E test, integration test :building_construction:
 
 #### To do
 - :white_check_mark: Configuration management from `.env` using [envdecode](https://github.com/joeshaw/envdecode)

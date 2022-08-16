@@ -18,16 +18,18 @@ import (
 )
 
 type application struct {
-	errorLog      *log.Logger
-	infoLog       *log.Logger
-	session       *sessions.Session
-	database      *mysql.SnippetModel
+	errorLog *log.Logger
+	infoLog  *log.Logger
+	session  *sessions.Session
+	database *mysql.SnippetModel
+	users    *mysql.UserModel
+
 	templateCache map[string]*template.Template
 }
-type Config struct {
-	Addr      string
-	StaticDir string
-}
+
+type contextKey string
+
+var contextKeyUser = contextKey("user")
 
 func main() {
 
@@ -59,8 +61,10 @@ func main() {
 
 	//secret: 32-byte long secret key for encrypting and authenticating
 	//the session cookies
-	session := sessions.New([]byte(*&cfg.CookieSetting.Secret32))
+	session := sessions.New([]byte(cfg.CookieSetting.Secret32))
 	session.Lifetime = 12 * time.Hour
+	session.Secure = true
+	session.SameSite = http.SameSiteStrictMode
 
 	app := &application{
 		errorLog:      errorLog,
@@ -68,6 +72,7 @@ func main() {
 		session:       session,
 		database:      &mysql.SnippetModel{DB: db},
 		templateCache: templateCache,
+		users:         &mysql.UserModel{DB: db},
 	}
 
 	tlsConfig := &tls.Config{

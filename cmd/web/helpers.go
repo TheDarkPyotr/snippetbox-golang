@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"snippetbox/pkg/models"
 	"time"
 )
 
 //render: to avoid code duplication in handlers.go
 //retrieve the appropriate template from template cache (see templates.go and main.go)
 
-func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td templateData) {
+func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
 
 	ts, ok := app.templateCache[name]
 	if !ok {
@@ -22,7 +23,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	//To avoid rendering error in pages first we try on buffer
 	buf := new(bytes.Buffer)
 	//If on buffer it's all ok
-	err := ts.Execute(buf, app.addDefaultData(&td, r))
+	err := ts.Execute(buf, app.addDefaultData(td, r))
 	if err != nil {
 		app.serverError(w, err)
 	}
@@ -46,12 +47,23 @@ func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
 
-//To inject the current year in every rendered page
+func (app *application) authenticatedUser(r *http.Request) *models.User {
+	user, ok := r.Context().Value(contextKeyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+	return user
+
+}
+
+//To inject data in every rendered page
 func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 
 	if td == nil {
 		td = &templateData{}
 	}
+	//td.CSFRToken = nosurf.Token(r)
+	td.AuthenticatedUser = app.authenticatedUser(r)
 	td.CurrentYear = time.Now().Year()
 	td.Flash = app.session.PopString(r, "flash")
 	return td

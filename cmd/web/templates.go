@@ -9,11 +9,13 @@ import (
 )
 
 type templateData struct {
-	Snippet     *models.Snippet
-	Snippets    []*models.Snippet
-	CurrentYear int
-	Form        *forms.Form
-	Flash       string
+	CSFRToken         string
+	Snippet           *models.Snippet
+	Snippets          []*models.Snippet
+	CurrentYear       int
+	Form              *forms.Form
+	Flash             string
+	AuthenticatedUser *models.User
 }
 
 // Create a humanDate function which returns a nicely formatted string
