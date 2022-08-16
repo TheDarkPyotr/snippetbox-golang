@@ -2,6 +2,7 @@ package main
 
 import (
 	"path/filepath"
+	forms "snippetbox/pkg/forms"
 	"snippetbox/pkg/models"
 	"text/template"
 	"time"
@@ -11,6 +12,8 @@ type templateData struct {
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 	CurrentYear int
+	Form        *forms.Form
+	Flash       string
 }
 
 // Create a humanDate function which returns a nicely formatted string

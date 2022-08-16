@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	forms "snippetbox/pkg/forms"
 	"snippetbox/pkg/models"
 	"strconv"
 )
@@ -38,6 +39,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 
 	//Because html/template allow only pass one data
 	//we wrap snippets in templateData struct
+
 	data := &templateData{Snippet: s}
 	app.render(w, r, "show.page.tmpl", *data)
 
@@ -45,19 +47,37 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 
 // Add a new createSnippetForm handler, which for now returns a placeholder res
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Create a new snippet..."))
+	app.render(w, r, "create.page.tmpl", templateData{
+		Form: forms.New(nil),
+	})
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 
-	title := "O snail"
-	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n Kobayashi"
-	expires := "7"
-	id, err := app.database.Insert(title, content, expires)
+	//To allow sending multipart data > 10MB
+	r.Body = http.MaxBytesReader(w, r.Body, 4096)
+
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	form := forms.New(r.PostForm)
+	form.Required("title", "content", "expires")
+	form.MaxLength("title", 100)
+	form.PermittedValues("expires", "365", "7", "1")
+	if !form.Valid() {
+		app.render(w, r, "create.page.tmpl", templateData{Form: form})
+		return
+	}
+
+	id, err := app.database.Insert(form.Get("title"), form.Get("content"), form.Get("expires"))
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
+
+	app.session.Put(r, "flash", "Snippet successfully created!")
 
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 

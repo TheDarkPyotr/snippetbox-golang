@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"time"
 
 	"github.com/joeshaw/envdecode"
 )
@@ -14,10 +15,29 @@ type dbConf struct {
 	DbName   string `env:"DB_NAME,required"`
 }
 
+type TLSServerInfo struct {
+	CertificatePath string `env:"TLS_CERT_PATH,required"`
+	PrivateKeyPath  string `env:"TLS_PKEY_PATH,required"`
+}
+
+type CookieInfo struct {
+	Secret32 string `env:"COOKIE_PKEY,required"`
+}
+
+type HTTPDefaultParam struct {
+	Addr         string        `env:"HTTP_SERVER_PORT,required"`
+	IdleTimeout  time.Duration `env:"HTTP_SERVER_TIMEOUT_IDLE,required"`
+	ReadTimeout  time.Duration `env:"HTTP_SERVER_TIMEOUT_READ,required"`
+	WriteTimeout time.Duration `env:"HTTP_SERVER_TIMEOUT_WRITE,required"`
+}
+
 type Specification struct {
-	Addr      string `env:"HTTP_SERVER_PORT,required"`
-	StaticDir string `env:"STATIC_PATH,required"`
-	DbConf    dbConf
+	ServerParams HTTPDefaultParam
+
+	StaticDir     string `env:"STATIC_PATH,required"`
+	DbConf        dbConf
+	TLS           TLSServerInfo
+	CookieSetting CookieInfo
 }
 
 func ServerConfiguration() *Specification {
