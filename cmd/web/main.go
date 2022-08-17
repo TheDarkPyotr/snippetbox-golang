@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	config "snippetbox/config"
+	"snippetbox/pkg/models"
 	"snippetbox/pkg/models/mysql"
 	"text/template"
 	"time"
@@ -21,8 +22,17 @@ type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
 	session  *sessions.Session
-	database *mysql.SnippetModel
-	users    *mysql.UserModel
+	database interface {
+		Insert(string, string, string) (int, error)
+		Get(int) (*models.Snippet, error)
+		Latest() ([]*models.Snippet, error)
+	}
+
+	users interface {
+		Insert(string, string, string) error
+		Authenticate(string, string) (int, error)
+		Get(int) (*models.User, error)
+	}
 
 	templateCache map[string]*template.Template
 }
@@ -83,7 +93,7 @@ func main() {
 	service := &http.Server{
 		Addr:         cfg.ServerParams.Addr,
 		ErrorLog:     errorLog,
-		Handler:      app.routes(cfg),
+		Handler:      app.routes(),
 		TLSConfig:    tlsConfig,
 		IdleTimeout:  cfg.ServerParams.IdleTimeout,
 		ReadTimeout:  cfg.ServerParams.ReadTimeout,

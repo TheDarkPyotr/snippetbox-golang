@@ -2,14 +2,13 @@ package main
 
 import (
 	"net/http"
-	"snippetbox/config"
 
 	"github.com/bmizerany/pat"
 
 	"github.com/justinas/alice"
 )
 
-func (app *application) routes(cfc *config.Specification) http.Handler {
+func (app *application) routes() http.Handler {
 
 	//Standard middleware for request without cookie
 	standardMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
@@ -30,6 +29,7 @@ func (app *application) routes(cfc *config.Specification) http.Handler {
 	mux.Post("/user/login", cookieMiddleware.ThenFunc(app.loginUser))
 	mux.Post("/user/logout", cookieMiddleware.Append(app.requiredAuthenticatedUser).ThenFunc(app.logoutUser))
 
+	mux.Get("/ping", http.HandlerFunc(ping))
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	mux.Get("/static/", http.StripPrefix("/static", fileServer))
 	return standardMiddleware.Then(mux)
