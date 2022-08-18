@@ -25,10 +25,9 @@ This is a **modified version** of the [Let's Go e-book by Alex Edwards](https://
  - Simple unit testing :white_check_mark:
  - Testing HTTP handlers :white_check_mark:
  - End-to-end testing :white_check_mark:
- - Mocking Database Dependencies :building_construction:
+ - Mocking Database Dependencies :white_check_mark:
  - Testing HTML Forms :building_construction:
- - Integration Test :building_construction:
- - Profiling Test Coverage :building_construction:
+ - Integration Test :white_check_mark:
 
 #### To do
 - :white_check_mark: Configuration management from `.env` using [envdecode](https://github.com/joeshaw/envdecode)
